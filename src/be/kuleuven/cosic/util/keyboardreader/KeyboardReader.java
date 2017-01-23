@@ -45,9 +45,13 @@ public class KeyboardReader {
 	private HashSet<Integer> keyFlag = new HashSet<>();
 
 	private Collection<KeyEventListener> listeners = new HashSet<>();
+	
+	private boolean blocking;
 
 	public KeyboardReader(HIDDevice dev, boolean blocking) throws IOException {
 		this.dev = dev;
+		
+		this.blocking = blocking;
 
 		if (blocking) {
 			dev.enableBlocking();
@@ -63,7 +67,15 @@ public class KeyboardReader {
 
 	public void readKeyboardDevices(KeyMap keyMap) throws IOException {
 		while (true) {
-
+			/* very short sleep to prevent the CPU from going crazy in non-blocking mode */
+			if(!blocking){
+				try {
+					Thread.sleep(1);
+				} catch (InterruptedException e) {
+				}
+			}
+			
+			
 			// the byte array is called input report,which only works
 			// when there is an input event;
 			// n is the number of bytes

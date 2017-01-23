@@ -31,7 +31,7 @@ public abstract class PersistentKeyboardMonitor {
 
 				@Override
 				public void run() {
-					
+					Thread.currentThread().setName("PersistentKeyboardMonitor");
 					while(true){
 						try {
 							Thread.sleep(pollingInterval);
@@ -81,9 +81,9 @@ public abstract class PersistentKeyboardMonitor {
 	protected abstract void deviceDisconnect(HIDDeviceInfo info);
 	protected abstract void useNewDevice(HIDDeviceInfo info, HIDDevice device) throws IOException;
 	
-	public synchronized void newDeviceDetected(HIDDeviceInfo deviceInfo){
+	public synchronized void newDeviceDetected(final HIDDeviceInfo deviceInfo){
 		try {
-			HIDDevice device = KeyboardsManager.openKeyboardDevice(deviceInfo);
+			final HIDDevice device = KeyboardsManager.openKeyboardDevice(deviceInfo);
 			if(device == null){
 				return; // for some odd reason, device is sometimes null
 			}
@@ -92,6 +92,7 @@ public abstract class PersistentKeyboardMonitor {
 			
 			new Thread(new Runnable(){
 				public void run(){
+					Thread.currentThread().setName("useNewDevice");
 					try {
 						useNewDevice(deviceInfo, device);
 					} catch (IOException e) {

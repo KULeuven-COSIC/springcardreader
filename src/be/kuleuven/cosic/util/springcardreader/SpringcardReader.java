@@ -28,7 +28,7 @@ public class SpringcardReader implements KeyEventListener {
 	public SpringcardReader(HIDDevice dev, KeyMap map) throws IOException {
 		this.map = map;
 		this.dev = dev;
-		reader = new KeyboardReader(dev, false);
+		reader = new KeyboardReader(dev, true);
 
 		reader.addManyKeyEventListener(this);
 	}
@@ -40,7 +40,7 @@ public class SpringcardReader implements KeyEventListener {
 	public HIDDevice getDevice(){
 		return dev;
 	}
-
+	
 	@Override
 	public void manyKeyEvent(KeyEvent event) {
 		if (event.isModifierKey()) {
@@ -52,6 +52,7 @@ public class SpringcardReader implements KeyEventListener {
 		if (event.getKeystring() == null) {
 			return;
 		}
+		
 		data = data + event.getKeystring();
 
 		if (event.getKeystring() == "\n") {
